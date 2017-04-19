@@ -1,0 +1,706 @@
+﻿<%@page language="abap" %>
+<%@extension name="bsp" prefix="bsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EC Self Service Portal</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
+  <style>
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 5px 10px;
+  }
+  #ajax-loader {
+     display: none;
+     position: fixed;
+     bottom: 0;
+     left: 0;
+     background: ajax-loader.gif ;
+}
+.busyindicatorClass
+{
+background-url: ajax_loader.gif ;
+}
+section#instructions {
+    background: #dff0d8;
+    border: solid 3px #c2d8b9;
+}
+  </style>
+  </head>
+<body>
+<!-- main Div -->
+  <div class="container">
+   <!-- Logo Header -->
+    <header>
+    <div class="clearfix float-my-children">
+      <br/>
+      <img id="Logo" src="color.jpg" style="height: 30px;">
+     <!-- <h3 id="Title">EC Self-Service Portal</h3>  -->
+    </div>
+    </header>
+       <br><br>
+<form id="ecform" class="form-horizontal" role="form">
+<!-- Form Name -->
+<legend>Virtual Site Information</legend>
+<section>
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="logoname">Logo Name</label>
+  <div class="col-md-4">
+  <input id="logoname" name="Logo Name" type="text" placeholder="Enter Name" class="form-control input-md" required="">
+  <input id="logobp" name="Logo BP" type="hidden" >
+  </div>
+</div>
+<fieldset id="tabctrl" disabled>
+<!--- start of tabs --->
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-3">Add Contacts</a></li>
+    <li><a href="#tabs-1">Create New Virtual Site</a></li>
+    <li><a href="#tabs-2">Edit Virtual Site</a></li>
+  </ul>
+  <div id="tabs-1">
+<div id="siteinfo" class="row" >
+<div class="form-group">
+  <label class="col-md-4 control-label" for="logoname">Site Name</label>
+  <div class="col-md-4">
+  <input id="sitename" name="sitename" type="text" placeholder="Enter Site Name" class="form-control input-md">
+  </div>
+</div>
+<div class="form-group">
+ <label class="col-md-4 control-label" for="startdate">Start Date:</label>
+<div class="col-md-4">
+ <input type="text" id="datepicker1">
+</div>
+</div>
+<div class="form-group">
+ <label class="col-md-4 control-label" for="startdate">End Date:</label>
+<div class="col-md-4">
+<input type="text" id="datepicker2">
+</div>
+</div>
+<!-- Create Virtual Site -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button id="vsbtn" name="singlebutton" class="btn btn-primary">Create</button>
+  </div>
+</div>
+</div>
+  </div>
+  <div id="tabs-2">
+<div class="row">
+<!-- Select Virtual Site -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="selectbasic">Related Virtual Sites</label>
+  <div class="col-md-4">
+    <select id="siteselect" name="siteSelect" class="form-control">
+    </select>
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-md-4 control-label" for="logoname">New Name</label>
+  <div class="col-md-4">
+  <input id="sitename_new" name="sitename_new" type="text" placeholder="Enter Site's New Name" class="form-control input-md">
+  </div>
+</div>
+<!-- Change Virtual Site -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button id="vsbtnedit" name="changename" class="btn btn-primary">Change Name</button>
+  </div>
+</div>
+  </div>
+</div>
+  <div id="tabs-3">
+    <div class="row">
+<!-- Select Virtual Site -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="selectbasic">Related Virtual Sites</label>
+  <div class="col-md-4">
+    <select id="siteselect2" name="siteSelect" class="form-control">
+    </select>
+  </div>
+</div>
+<fieldset id="contactctrl" disabled>
+<div class="form-group">
+  <label class="col-md-4 control-label" for="selectbasic">Related Site Contacts</label>
+  <div class="col-md-4">
+    <select id="contactselect2" name="contactSelect" class="form-control">
+    </select>
+  </div>
+</div>
+<div class="form-group" style="display:none" >
+  <label class="col-md-4 control-label" for="contacts">Filter Logo Contacts</label>
+  <div class="col-md-4">
+   <input id="contacts" name="contacts" placeholder="Enter Contact Name" class="form-control input-md">
+   <button id="contactfilter2" name="contacts" class="btn btn-primary">Filter Contacts</button>
+  </div>
+</div>
+<br>
+   <div class="col-xs-5">
+    <div class="input-group">
+      <input id = "csrchtemp" name="q" class="form-control" placeholder="Search Contacts" />
+      <div class="input-group-btn">
+        <button id="contactfilter" name="csrchtemp" class="btn btn-primary" type="button">Find</button>
+       </div>
+    </div>
+        <select name="from[]" id="multiselect" class="form-control" size="10" multiple="multiple">
+            <option value="1">Logo Related Contacts</option>
+        </select>
+    </div>
+    <div class="col-xs-2">
+        <button type="button" id="multiselect_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+        <button type="button" id="multiselect_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+        <button type="button" id="multiselect_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+        <button type="button" id="multiselect_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+    </div>
+    <div class="col-xs-5">
+        <select name="to[]" id="multiselect_to" class="form-control" size="10" multiple="multiple"></select>
+    </div>
+    </fieldset>
+</div>
+<br/>
+<div class="row">
+<div class="form-group">
+  <div class="col-md-4">
+    <button id="assigncontact" name="singlebutton" class="btn btn-primary">Assign Contacts to selected virtual site</button>
+  </div>
+</div>
+</div>
+  </div>
+</div>
+<!--- end of tabs --->
+</fieldset>
+</section>
+</form>
+</div>
+<div id="contact-confirm" title="Do you want save selected contacts?" style="display:none">
+<div id="contacttext">
+</div>
+</div>
+<div id="domMessage" style="display:none;">
+    <h1>We are processing your request.  Please be patient.</h1>
+</div>
+<div id="progressbar"></div>
+<div id='ajax_loader' style="position: fixed; left: 50%; top: 50%; display: none;">
+    <img src="https://www.drupal.org/files/issues/ajax-loader.gif"></img>
+</div>
+<div id="ajax-loader" class="busyindicatorClass">
+<img id="loading" src="ajax_loader.gif" style="display: none;"/>
+</div>
+<!-- main Div Close -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src="multiselect.js" type="text/javascript"></script>
+   <script src="jquery.blockUI.js" type="text/javascript"></script>
+<script>
+ $(document).ajaxStop($.unblockUI);
+$(document).ready(function() {
+var aliasname, logojson, sitejson, landjson, logobp, contacts = [];
+      var clist = "<option value=''> --- ALL Logo Contacts--- </option>";
+
+logojson = '<%= logojson %>';
+sitejson = '<%= sitejson %>';
+landjson = '<%= landjson %>';
+aliasname = '<%= aliasname%>';
+$( "#tabs" ).tabs();
+$( "#datepicker1" ).datepicker();
+$( "#datepicker2" ).datepicker();
+
+
+  // Logo AutoComplete
+        $("#logoname").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "logo.htm",
+                    dataType: "json",
+                    data: { logoname: $("#logoname").val() },
+                    success: function(data) {
+                        //$("#emptab1").hide();
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.logoname,
+                                id: item.logobp
+                            };
+                        }));
+                    },
+                    error: function(data, statusText) {
+                          // alert("Error in Finding Logo ");
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                //$("#").val(ui.item.id);
+                $("#logoname").val(ui.item.id);
+                $("#logobp").val(ui.item.id);
+                $("#tabctrl").prop('disabled', false);
+                logobp = ui.item.id;
+                 getsite();
+               //  getcontact();
+                //return false;
+            }
+        });
+function getsite() {
+ var values = {};
+  values['logo'] = $('#logoselect').val();
+  values['logobp'] = logobp;
+  console.log(values);
+          var slist = "<option value=''>Select Site</option>";
+                  $.ajax({
+                    type: "POST",
+                    url: "sites.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        $(returnData).each(function(i, val) {
+                            $.each(val, function(k, v) {
+                            console.log(val);
+                                if (k == 'id') {
+                                    slist += "<option value='" + v + "'>";
+                                } else {
+                                    slist += v + "</option>";
+                                }
+                                console.log(slist);
+                                $("#siteselect").html(slist);
+                                $("#siteselect2").html(slist);
+                            });
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        // alert("Error in sites.htm");
+                    }
+                })
+}
+$( "#siteselect2" ).change(function() {
+ // alert( "site selected." );
+  $("#contactctrl").prop('disabled', false);
+  $.blockUI();
+   getsitecontacts();
+//if (! $('#siteselect2').val()) {
+//if (! $( "#siteselect2" )){
+ // getsitecontacts();
+//  }
+//$.blockUI();
+ // getcontact();
+
+});
+function getsitecontacts() {
+ var values = {};
+  values['logo'] = $('#logoselect').val();
+values['site'] = $('#siteselect2').val();
+  values['logobp'] = logobp;
+          var slist = "<option value=''> --- Assigned Contacts ---</option>";
+                  $.ajax({
+                    type: "POST",
+                    url: "sitecontacts.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        $(returnData).each(function(i, val) {
+                            $.each(val, function(k, v) {
+                            console.log(val);
+                                if (k == 'id') {
+                                    slist += "<option value='" + v + "'>";
+                                } else {
+                                    slist += v + "</option>";
+                                }
+                                //console.log(slist);
+                                //$("#siteselect").html(slist);
+                                $("#contactselect2").html(slist);
+
+                            });
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                         //alert("Error in sitecontacts.htm");
+                    }
+                })
+}
+function getcontact() {
+ var values = {};
+  values['logo'] = $('#logoselect').val();
+  values['logobp'] = logobp;
+       //   var clist = "<option value=''> --- ALL Logo Contacts--- </option>";
+                  $.ajax({
+                    type: "POST",
+                    url: "contact.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        //alert(returnData.length);
+                        if (returnData.length < 1300){
+                        processLargeArray(returnData);
+                        } else{  $("#contacts").prop('disabled', false); $("#contactsfilter").prop('disabled', false);}
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        // alert("Error in sites.htm");
+                    },
+               complete: function(){
+                  //$("#ajax-loader").hide();
+                  $("#loading").fadeOut();
+            }
+                })
+}
+
+// chunk data display
+
+function processLargeArray(array) {
+    // set this to whatever number of items you can process at once
+    var chunk = 100;
+    var index = 0;
+    function doChunk() {
+        var cnt = chunk;
+  //      var clist = "<option value=''> --- ALL Logo Contacts--- </option>";
+        while (cnt-- && index < array.length) {
+            // process array[index] here
+                     // console.log(array[index]);
+                   // $(array).each(function(i, val) {
+                            $.each(array[index], function(k, v) {
+
+                              if (k == 'id') {
+                                    clist += "<option value='" + v + "'>";
+                                } else {
+                                    clist += v + "</option>";
+                                }
+
+                               // $("#multiselect").html(clist);
+
+                            });
+                            //console.log(clist);
+                            $("#multiselect").html(clist);
+                       // });
+            ++index;
+        }
+        if (index < array.length) {
+            // set Timeout for async iteration
+            setTimeout(doChunk, 100);
+        }
+    }
+    doChunk();
+     //$("#multiselect").html(clist);
+}
+
+// contacts filter
+/* $("#contactfilter2").on('click', function(e) {
+e.preventDefault();
+
+getcontactsrch()
+
+}); */
+
+$('#contactfilter').on('click', function(e) {
+e.preventDefault();
+//alert($('#csrchtemp').val());
+//$('#contacts').val() = $('#csrchtemp').val();
+getcontactsrch();
+
+});
+
+
+function contactinfowindow(num){
+
+
+   $('<div></div>').dialog({
+        modal: true,
+        title: 'Too Many Contacts# '+ num + '#',
+        open: function () {
+ var list =  ' Please enter atleast three letter of  First Name OR Last Name !'
+
+$(this).html(list);
+        },
+      buttons: {
+        "OK": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+}
+
+function getcontactsrch() {
+ var values = {};
+  values['logo'] = $('#logoselect').val();
+  values['logobp'] = logobp;
+  values['csrchstr'] = $('#csrchtemp').val();
+  //values['csrchstr'] = $('#contacts').val();
+       //   var clist = "<option value=''> --- ALL Logo Contacts--- </option>";
+                  $.ajax({
+                    type: "POST",
+                    url: "contact.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        //alert(returnData.length);
+                        if (returnData.length > 1500){
+                        var length = returnData.length;
+                        //alert('Too Many Contacts #' + length + ' Please enter partial First Name or Last Name');
+                        contactinfowindow(length);
+                        }
+                        else {
+                       // $("#multiselect").options.length = 0;
+                        $("#multiselect").children().remove()
+                        processLargeArray(returnData);}
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        // alert("Error in sites.htm");
+                    },
+               complete: function(){
+                  //$("#ajax-loader").hide();
+                  $("#loading").fadeOut();
+            }
+                })
+}
+// end filter
+var revlink = aliasid();
+//console.log(revlink);
+function aliasid(){
+var redir;
+switch (aliasname){
+
+}
+return redir;
+}
+
+        function show_message() {
+            $.blockUI({
+                css: {
+                    width: '50%',
+                    left: '25%',
+                    padding: '10px',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px'
+                },
+                message: $('#domMessage'),
+                timeout: 5000,
+                onUnblock: function() {
+                 var redirlink = aliasid();
+                    var newURL = redirlink;
+                    //window.location = newURL;
+                }
+            });
+        }
+
+
+//$('#multiselect').multiselect();
+   $('#multiselect').multiselect({
+        search: {
+            left: '<input id = "csrchtemp2" type="text" name="q" class="form-control" placeholder="Search..." />',
+            right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+        },
+     afterMoveToRight: function($left, $right, $options) {
+$.each( $options, function(i, item) {
+var cobj = {};
+cobj["name"] = item.text
+cobj["bp"] = item.value ;
+contacts.push(cobj);
+});
+
+
+      //var cont = new Array();
+      //console.log($options);
+      //cont($options.value);
+      //console.log(cont);
+//console.log($right.val);
+     return true; },
+     close: function() {
+            //debugger;
+            var values = new Array();
+            $(this).multiselect("getChecked").each(function(index, item) {
+                values.push($(item).val());
+            });
+           // $("input[id*=SelectedValues]").val(values.join(","));
+           contacts(values.join(","));
+           //console.log(values);
+           //console.log(contacts);
+    }
+    });
+//var contactsselected = $('#multiselect_to').val();
+$("#vsbtn").on('click', function(e) {
+e.preventDefault();
+$.blockUI();
+var values = {};
+//console.log("sitebutton clciked");
+            values['sitename'] = $('#sitename').val();
+            values['startdate'] = $('#datepicker1').val();
+            values['enddate'] = $('#datepicker2').val();
+             values['logobp'] = logobp;
+            if (this.id == 'vsbtn') {
+                $.ajax({
+                    type: "POST",
+                    url: "site_save.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        if (returnData.status == "error") {
+                            //alert("Error in Requesting NDA");
+                        } else {
+                            message = returnData.status;
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        //alert("Error in site_save page");
+                    }
+                })
+               }
+           });
+
+    $("#vsbtnedit").on('click', function(e) {
+          e.preventDefault();
+        //alert('change name btn clicked');
+        var values = {};
+            values['siteid'] = $('#siteselect').val();
+            values['newsitename'] = $('#sitename_new').val();
+
+
+            if (this.id == 'vsbtnedit') {
+                $.ajax({
+                    type: "POST",
+                    url: "site_save.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        if (returnData.status == "error") {
+                            //alert("Error in Requesting NDA");
+                        }
+                         else
+                         {
+                            message = returnData.status;
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+
+                    }
+                })
+               }
+
+         });
+
+
+$("#assigncontact").on('click', function(e) {
+e.preventDefault();
+//alert(contacts.length);
+//console.log(JSON.stringify(contacts));​
+//console.log(contacts);
+confirmationWindow();
+});
+function confirmationWindow(){
+   // $('#dialog-confirm').fadeIn();
+   $('<div></div>').dialog({
+        modal: true,
+        title: "Do You want to assign these contatcs?",
+        open: function () {
+ var list = "<ul>"
+$.each( contacts, function( i, val ) {
+    list += "<li>" + val.name + ":" + val.bp + "</li>"
+});
+list += "</ul>";
+$(this).html(list);
+        },
+      buttons: {
+        "save": function() {
+         assigncontact();
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+}
+function assigncontact() {
+
+var sitenumber = $('#siteselect2').val();
+                $.ajax({
+                    type: "POST",
+                    url: "assign_contact.htm",
+                    data: { "siteid" : sitenumber,
+                            "contacts" : contacts},
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        alert(returnData.status);
+                        console.log(returnData);
+                        if (returnData.status == "error") {
+                            //alert("Error in Requesting NDA");
+                            show_message()
+                        } else {
+                            message = returnData.status;
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        //alert("Error in NDA_Request.htm");
+                    }
+                })
+}
+$("#dt1").datepicker({
+        dateFormat: "dd-M-yy",
+        minDate: 0,
+        onSelect: function () {
+            var dt2 = $('#dt2');
+            var startDate = $(this).datepicker('getDate');
+            //add 365 days to selected date
+            startDate.setDate(startDate.getDate() + 365);
+            var minDate = $(this).datepicker('getDate');
+            //minDate of dt2 datepicker = dt1 selected day
+            dt2.datepicker('setDate', minDate + 365 );
+            //sets dt2 maxDate to the last day of 30 days window
+            dt2.datepicker('option', 'maxDate', startDate);
+            //first day which can be selected in dt2 is selected date in dt1
+            dt2.datepicker('option', 'minDate', minDate);
+            //same for dt1
+            $(this).datepicker('option', 'minDate', minDate);
+        }
+    });
+    $('#dt2').datepicker({
+        dateFormat: "dd-M-yy"
+    });
+// $('#contactSelect').multiSelect();
+ /*        $("#btn_submit").on('click', function(e) {
+            var values = {};
+            values['sitename'] = $('#siteSelect').val();
+            values['country'] = $('#landSelect').val();
+            values['fromdate'] = $('#dt1').val();
+            values['todate'] = $('#dt2').val();
+            values['logoname'] = $('#logoselect').val();;
+            values['action'] = 'C';
+                     if (this.id == 'btn_submit') {
+                $.ajax({
+                    type: "POST",
+                    url: "Site_Save.htm",
+                    data: values,
+                    success: function(data, textStatus, jqXHR) {
+                        var returnData = $.parseJSON(data);
+                        if (returnData.status == "error") {
+                            alert("Error in Requesting NDA");
+                        } else {
+                            message = returnData.status;
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("Error in Site_Save.htm");
+                    }
+                })
+            }
+         }); */
+  })
+</script>
+</body>
+</html>
